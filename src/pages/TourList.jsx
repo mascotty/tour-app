@@ -86,7 +86,7 @@ const TourList = () => {
 
             // 同步到后端
             try {
-                await axios.post('${api}/api/favorites', {
+                await axios.post(`${api}/api/favorites`, {
                     username: user.username,
 
                     tour_id: id,
