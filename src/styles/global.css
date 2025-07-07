@@ -1,0 +1,39 @@
+/* 设置统一容器 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 卡片悬停动画 */
+.ant-card {
+    transition: all 0.3s ease;
+}
+
+.ant-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+/* 标题统一字体样式 */
+h1,
+h2,
+h3 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 全局字体和背景 */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+}
+
+/* 按钮样式细节 */
+button.ant-btn-primary {
+    transition: background-color 0.3s ease;
+}
+
+button.ant-btn-primary:hover {
+    background-color: #1677ff;
+}
