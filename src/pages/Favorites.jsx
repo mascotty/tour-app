@@ -140,6 +140,10 @@ import { HeartFilled } from '@ant-design/icons';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import axios from 'axios';
 
+const api = import.meta.env.VITE_API_BASE;
+
+
+
 const PAGE_SIZE = 2;
 
 const Favorites = () => {
@@ -158,7 +162,7 @@ const Favorites = () => {
         }
 
         try {
-            const res = await axios.get(`http://localhost:5000/api/favorites?username=${user.username}`);
+            const res = await axios.get(`${api}/api/favorites?username=${user.username}`);
             const ids = res.data;
             localStorage.setItem('favorites', JSON.stringify(ids)); // 同步缓存
 
@@ -185,7 +189,7 @@ const Favorites = () => {
 
         try {
             // 请求后端删除
-            await axios.post('http://localhost:5000/api/favorites', {
+            await axios.post('${api}/api/favorites', {
                 username: user.username,
                 tour_id: id,
                 action: 'remove',

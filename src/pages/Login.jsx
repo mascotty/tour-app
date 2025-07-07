@@ -76,6 +76,9 @@ import { Form, Input, Button, Card, message } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const api = import.meta.env.VITE_API_BASE;
+
+
 const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -86,7 +89,7 @@ const Login = () => {
         try {
             setLoading(true);
             setFieldErrors({}); // 清空旧的错误
-            const res = await axios.post('http://localhost:5000/login', values);
+            const res = await axios.post('${api}/login', values);
             console.log('响应数据:', res.data);
 
             if (res.data.success) {

@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { checkLoginAndRun } from '../utils/checkLoginAndRun';
 import axios from 'axios';
 
+const api = import.meta.env.VITE_API_BASE;
+
+
 const { Option } = Select;
 
 const TourList = () => {
@@ -30,7 +33,7 @@ const TourList = () => {
             if (!user || !user.username) return;
 
             try {
-                const res = await axios.get(`http://localhost:5000/api/favorites?username=${user.username}`);
+                const res = await axios.get(`${api}/api/favorites?username=${user.username}`);
                 const ids = res.data;
                 setFavorites(ids);
                 localStorage.setItem('favorites', JSON.stringify(ids));
@@ -83,7 +86,7 @@ const TourList = () => {
 
             // 同步到后端
             try {
-                await axios.post('http://localhost:5000/api/favorites', {
+                await axios.post('${api}/api/favorites', {
                     username: user.username,
 
                     tour_id: id,
