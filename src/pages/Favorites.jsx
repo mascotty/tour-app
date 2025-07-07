@@ -189,7 +189,7 @@ const Favorites = () => {
 
         try {
             // 请求后端删除
-            await axios.post('${api}/api/favorites', {
+            await axios.post(`${api}/api/favorites`, {
                 username: user.username,
                 tour_id: id,
                 action: 'remove',
