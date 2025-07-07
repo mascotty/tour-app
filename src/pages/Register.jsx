@@ -13,7 +13,7 @@ const Register = () => {
     const onFinish = async (values) => {
         try {
             setLoading(true);
-            const res = await axios.post('${api}/register', values); // 注意这里端口！
+            const res = await axios.post(`${api}/register`, values); // 注意这里端口！
             if (res.data.success) {
                 message.success('注册成功，请登录');
                 navigate('/login'); // 跳转到登录页

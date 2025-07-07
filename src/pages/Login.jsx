@@ -89,7 +89,7 @@ const Login = () => {
         try {
             setLoading(true);
             setFieldErrors({}); // 清空旧的错误
-            const res = await axios.post('${api}/login', values);
+            const res = await axios.post(`${api}/login`, values);
             console.log('响应数据:', res.data);
 
             if (res.data.success) {
