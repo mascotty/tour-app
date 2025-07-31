@@ -223,15 +223,7 @@ const EditTour = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const username = JSON.parse(localStorage.getItem('user'))?.username;
-    const showModal = () => {
-        Modal.success({
-            title: '测试弹窗',
-            content: '这是测试内容',
-            onOk() {
-                console.log('确认关闭');
-            },
-        });
-    };
+
 
 
 
@@ -475,7 +467,7 @@ const EditTour = () => {
                     </Form.Item>
                 </Form>
             </div>
-            <Button onClick={showModal}>测试弹窗</Button>;
+
         </div>
     );
 };
