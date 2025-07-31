@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Select, Button, message } from 'antd';
+import { Card, Row, Col, Select, Button, message, Avatar, Divider } from 'antd';
 import { Link } from 'react-router-dom';
-import { destinations } from '../data/mockData';
+// import { destinations } from '../data/mockData';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { checkLoginAndRun } from '../utils/checkLoginAndRun';
@@ -17,6 +17,8 @@ const TourList = () => {
 
     const [category, setCategory] = useState('all');
     const [favorites, setFavorites] = useState([]);
+
+    const [tours, setTours] = useState([]); // 👈 后端返回的你上传的图片和数据
 
     // 初始加载收藏状态
     // 从浏览器的本地存储中获取之前保存的收藏数据，如果存在则解析并更新favorites状态。
@@ -45,6 +47,23 @@ const TourList = () => {
         };
 
         fetchFavorites();
+    }, []);
+
+
+
+    //这里是新增上传图片功能后你需要做的获取后端数据并保存到state状态中
+    useEffect(() => {
+        const fetchTours = async () => {
+            try {
+                const res = await axios.get(`${api}/api/tours`);
+                setTours(res.data); // 👈 保存后端数据
+            } catch (err) {
+                console.error('获取游记失败', err);
+                message.error('加载游记失败');
+            }
+        };
+
+        fetchTours();
     }, []);
 
 
@@ -104,12 +123,12 @@ const TourList = () => {
 
     const filteredTours =
         category === 'all'
-            ? destinations
-            : destinations.filter(tour => tour.category === category);
+            ? tours
+            : tours.filter(tour => tour.category === category);
 
     return (
         <div className="container" style={{ padding: '20px 0' }}>
-            <div style={{ marginBottom: 20 }}>
+            {/* <div style={{ marginBottom: 20 }}>
                 <Select
                     defaultValue="all"
                     style={{ width: 200 }}
@@ -120,9 +139,11 @@ const TourList = () => {
                     <Option value="文化">文化</Option>
                     <Option value="度假">度假</Option>
                 </Select>
-            </div>
+            </div> */}
 
             <Row gutter={[16, 16]}>
+
+
                 {filteredTours.map(tour => (            //因为初始时category是all，所以destination也是全部，所以filteredTours也显示全部
                     <Col xs={24} sm={12} md={8} lg={6} key={tour.id}>
                         {/* 这是响应式布局的核心，表示在不同屏幕尺寸下 Col 占据的单元数：
@@ -131,14 +152,16 @@ const TourList = () => {
                         md：中等屏幕（如笔记本，≥768px）时占据 8 个单元（1/3 屏宽度）。
                         lg：大屏幕（如桌面显示器，≥992px）时占据 6 个单元（1/4 屏宽度）。
                         key={tour.id}：React 列表渲染时必须为每个 Col 提供唯一的 key，用于优化渲染性能。 */}
-                        <Card
+                        {/* <Card
                             //     Card 组件：Ant Design 的核心展示组件，用于包裹内容形成独立信息块，默认带有边框和阴影。
                             // 嵌套关系：
                             //     Card 包含 Card.Meta（元信息），cover 和 actions 是 Card 的属性（非子组件）。
+                            style={{ minHeight: 340, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
                             cover={
+
                                 <img
                                     alt={tour.name}
-                                    src={tour.image}
+                                    src={tour.mainImage}
                                     style={{ height: 200, objectFit: 'cover' }}     //cover:图片等比例缩放并覆盖容器，避免变形（例如横向图片会裁剪左右两侧，纵向图片会裁剪上下两侧）。
                                 />
                             }
@@ -158,11 +181,154 @@ const TourList = () => {
                                 ),
                             ]}
                         >
+                            <Divider style={{ margin: '8px 0', borderColor: '#e8e8e8' }} />
+
                             <Card.Meta
                                 title={tour.name}
-                                description={`￥${tour.price} | ${tour.duration}`}
+
+                                description={
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                        <div style={{ flexShrink: 0 }}>
+                                            <Avatar
+                                                size={18}
+                                                src={
+                                                    tour.avatar && tour.avatar.startsWith('http')
+                                                        ? tour.avatar
+                                                        : `https://api.dicebear.com/7.x/thumbs/svg?seed=${tour.username}`
+                                                }
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                height: '60px', // 固定为大约三行高度（可根据实际字体大小微调）
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    lineHeight: '1.4',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 3,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                            >
+                                                {tour.description || '暂无描述'}
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                }
+                            />
+
+
+
+                        </Card> */}
+                        <Card
+                            hoverable
+                            onClick={() => navigate(`/tours/${tour.id}`)}
+                            style={{
+                                minHeight: 340,
+                                borderRadius: '12px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                                border: 'none',
+                                overflow: 'hidden',
+                                transition: 'all 0.3s',
+                            }}
+                            bodyStyle={{ padding: '12px 16px' }}
+                            cover={
+                                <div style={{ position: 'relative' }}>
+                                    <img
+                                        alt={tour.name}
+                                        src={tour.mainImage}
+                                        style={{
+                                            height: 200,
+                                            width: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                    />
+                                    {/* ❤️ 收藏图标 */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // 防止触发整个卡片跳转
+                                            toggleFavorite(tour.id);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 10,
+                                            right: 10,
+                                            background: 'rgba(255, 255, 255, 0.85)',
+                                            borderRadius: '50%',
+                                            padding: 6,
+                                            cursor: 'pointer',
+                                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                                            zIndex: 2,
+                                        }}
+                                    >
+                                        {favorites.includes(tour.id) ? (
+                                            <HeartFilled style={{ color: '#ff4d4f', fontSize: 18 }} />
+                                        ) : (
+                                            <HeartOutlined style={{ color: '#999', fontSize: 18 }} />
+                                        )}
+                                    </div>
+                                </div>
+                            }
+                        >
+                            <Card.Meta
+                                title={tour.name}
+                                description={
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/user/${tour.username}`);
+                                            }}
+                                            style={{
+                                                flexShrink: 0,
+                                                cursor: 'pointer',
+                                                transition: 'transform 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.transform = 'scale(1.15)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.transform = 'scale(1)';
+                                            }}
+                                        >
+                                            <Avatar
+                                                size={22}
+                                                src={
+                                                    tour.avatar && tour.avatar.startsWith('http')
+                                                        ? tour.avatar
+                                                        : `https://api.dicebear.com/7.x/thumbs/svg?seed=${tour.username}`
+                                                }
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                height: '60px',
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    lineHeight: '1.4',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 3,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                            >
+                                                {tour.description || '暂无描述'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
                             />
                         </Card>
+
                     </Col>
                 ))}
             </Row>
