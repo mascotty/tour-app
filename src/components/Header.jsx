@@ -604,44 +604,33 @@ const Header = () => {
                 borderRight: '1px solid #f0f0f0',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
-                paddingTop: 20,
                 zIndex: 1000,
+                paddingTop: 20,
             }}
         >
-            {/* 顶部 Logo + 菜单内容组合为一个整体 */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {/* <div style={{ textAlign: 'center', marginBottom: 30 }}>
-                    <img src={logo1} alt="Logo" style={{ height: 40 }} />
-                    <div style={{ fontWeight: 'bold', marginTop: 8 }}>Travel-easy</div>
-                </div> */}
-                {/* 在同一行 */}
-                {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 30 }}>
+            {/* 顶部 Logo */}
+            <Link to="/" style={{ textDecoration: 'none' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 30,
+                        cursor: 'pointer',
+                        color: 'inherit',
+                    }}
+                >
                     <img src={logo1} alt="Logo" style={{ height: 30, marginRight: 8 }} />
-                    <div style={{ fontWeight: 'bold', fontSize: 18 }}>Travel-easy</div>
-                </div> */}
-                {/* 实现点击跳转功能 */}
-                <Link to="/" style={{ textDecoration: 'none' }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginBottom: 30,
-                            cursor: 'pointer',
-                            color: 'inherit',
-                        }}
-                    >
-                        <img src={logo1} alt="Logo" style={{ height: 30, marginRight: 8 }} />
-                        <div style={{ fontWeight: 'bold', fontSize: 18, color: 'black' }}>Travel-easy</div>
-                    </div>
-                </Link>
+                    <div style={{ fontWeight: 'bold', fontSize: 18, color: 'black' }}>Travel-easy</div>
+                </div>
+            </Link>
 
-
+            {/* ✅ 菜单区填满剩余空间 */}
+            <div style={{ flex: 1, overflowY: 'auto' }}>
                 <Menu
                     mode="inline"
                     selectedKeys={[location.pathname]}
-                    style={{ borderRight: 0, flex: 1 }}
+                    style={{ borderRight: 0 }}
                     items={[
                         {
                             key: '/',
@@ -679,10 +668,13 @@ const Header = () => {
                 />
             </div>
 
-
-            {/* 这里才是真正放到底部的容器 */}
-            <div style={{ width: '100%', marginTop: 280 }}>{authMenu}</div>
+            {/* ✅ 让 authMenu 固定在最底部 */}
+            <div style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
+                {authMenu}
+            </div>
         </Sider>
+
+
 
     );
 };
