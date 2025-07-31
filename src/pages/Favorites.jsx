@@ -484,7 +484,7 @@ const Favorites = () => {
                                                 zIndex: 2,
                                             }}
                                         >
-                                            <HeartFilled style={{ color: 'purple', fontSize: 18 }} />
+                                            <HeartFilled style={{ color: 'red', fontSize: 18 }} />
                                         </div>
                                     </div>
                                 }
