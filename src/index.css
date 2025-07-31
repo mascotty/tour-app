@@ -1,1 +1,5 @@
 @import './styles/global.css';
+
+html {
+    font-size: 16px !important;
+}

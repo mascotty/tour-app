@@ -608,7 +608,7 @@ const Header = () => {
                 paddingTop: 20,
             }}
         >
-            {/* 顶部 Logo */}
+            {/* 顶部 Logo 区域 */}
             <Link to="/" style={{ textDecoration: 'none' }}>
                 <div
                     style={{
@@ -625,12 +625,12 @@ const Header = () => {
                 </div>
             </Link>
 
-            {/* ✅ 菜单区填满剩余空间 */}
-            <div style={{ flex: 1, overflowY: 'auto' }}>
+            {/* 中间内容：使用 flex: 1 撑开中间空间 */}
+            <div style={{ flex: 1, overflow: 'auto' }}>
                 <Menu
                     mode="inline"
                     selectedKeys={[location.pathname]}
-                    style={{ borderRight: 0 }}
+                    style={{ borderRight: 0, height: '100%' }}
                     items={[
                         {
                             key: '/',
@@ -668,11 +668,18 @@ const Header = () => {
                 />
             </div>
 
-            {/* ✅ 让 authMenu 固定在最底部 */}
-            <div style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
+            {/* ✅ 完全贴底的登录头像按钮 */}
+            <div
+                style={{
+                    padding: '16px',
+                    borderTop: '1px solid #f0f0f0',
+                    marginTop: 'auto', // 关键修改：确保这个div被推到最底部
+                }}
+            >
                 {authMenu}
             </div>
         </Sider>
+
 
 
 
