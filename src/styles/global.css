@@ -23,11 +23,22 @@ h3 {
 }
 
 /* 全局字体和背景 */
-body {
+/* body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f8f9fa;
     margin: 0;
+} */
+html {
+    font-size: 16px;
 }
+
+body {
+    font-size: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+}
+
 
 /* 按钮样式细节 */
 button.ant-btn-primary {
