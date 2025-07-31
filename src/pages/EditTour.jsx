@@ -309,7 +309,6 @@ const EditTour = () => {
             });
 
             // 弹出提示后跳转
-            message.success('!!!')
             Modal.success({
                 title: '保存成功',
                 content: '游记信息已更新成功！',
