@@ -18,7 +18,7 @@ const TourList = () => {
     const [category, setCategory] = useState('all');
     const [favorites, setFavorites] = useState([]);
 
-    const [tours, setTours] = useState([]); // 👈 后端返回的你上传的图片和数据
+    const [tours, setTours] = useState([]); // 后端返回的上传的图片和数据
 
     // 初始加载收藏状态
     // 从浏览器的本地存储中获取之前保存的收藏数据，如果存在则解析并更新favorites状态。

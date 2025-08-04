@@ -161,19 +161,7 @@ def upload_tour_image():
     file_url = f"{host_url}/uploads/{filename}"
     return jsonify({'success': True, 'url': file_url})
 
-# @app.route('/api/tours/add', methods=['POST'])
-# def add_tour():
-#     data = request.get_json()
-#     required = ['username', 'name', 'description', 'price', 'duration', 'mainImage', 'images']
-#     if not all(field in data for field in required):
-#         return jsonify({'success': False, 'message': '缺少字段'})
 
-#     tours = load_tours()
-#     new_id = max([t['id'] for t in tours], default=0) + 1
-#     data['id'] = new_id
-#     tours.append(data)
-#     save_tours(tours)
-#     return jsonify({'success': True, 'id': new_id})
 @app.route('/api/tours/add', methods=['POST'])
 def add_tour():
     data = request.get_json()
@@ -307,30 +295,6 @@ def get_all_tours():
         save_tours(tours)
 
     return jsonify(tours)
-
-
-# @app.route('/api/tours/<int:tour_id>', methods=['PUT'])
-# def update_tour(tour_id):
-#     data = request.get_json()
-#     tours = load_tours()
-#     updated = False
-
-#     for i, tour in enumerate(tours):
-#         if tour['id'] == tour_id:
-#             data['id'] = tour_id  # 确保 ID 不被修改
-#             data['username'] = tour['username']  # 不允许改用户名
-#             data['mainImage'] = tour['mainImage']  # 可选保留图片
-#             data['images'] = tour['images']  # 可选保留图集
-#             data['searchCount'] = tour.get('searchCount', 0)  # 保留搜索次数
-#             tours[i] = data
-#             updated = True
-#             break
-
-#     if updated:
-#         save_tours(tours)
-#         return jsonify({'success': True})
-#     else:
-#         return jsonify({'success': False, 'message': '游记未找到'}), 404
 
 
 

@@ -128,5 +128,20 @@
     "createdAt": "2025-07-31T10:24:29.051295",
     "searchCount": 0,
     "avatar": "http://localhost:5000/uploads/admin_avatar.png"
+  },
+  {
+    "name": "土耳其",
+    "description": " 我",
+    "duration": "2天",
+    "price": "5000",
+    "accommodation": " 额外",
+    "username": "admin",
+    "mainImage": "http://localhost:5000/uploads/admin_1754146124_5da6774974b38a6a55cc0304ec4353b.jpg",
+    "images": [
+      "http://localhost:5000/uploads/admin_1754146131_1b4ebaa7ac147876b6422cdee521f21.jpg",
+      "http://localhost:5000/uploads/admin_1754146131_2ef8db9b5d06d2cc092c4af39f91dad.jpg"
+    ],
+    "id": 7,
+    "createdAt": "2025-08-02T22:48:52.183101"
   }
 ]

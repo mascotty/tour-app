@@ -29,7 +29,7 @@
 //                     description: data.description,
 //                     price: data.price,
 //                     duration: data.duration,
-//                     accommodation: data.accommodation || '', // ✅ 加这行
+//                     accommodation: data.accommodation || '', //  加这行
 //                 });
 
 //                 // 设置主图
@@ -324,7 +324,7 @@ const EditTour = () => {
                 content: '请稍后再试，或检查网络连接。',
             });
         } finally {
-            setUploading(false); // ✅ 放这里确保不管成功失败都重置按钮状态
+            setUploading(false); //  放这里确保不管成功失败都重置按钮状态
         }
     };
 
