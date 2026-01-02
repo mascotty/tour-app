@@ -444,8 +444,8 @@ const UserProfile = () => {
                 >
                     <Form.Item label="头像">
                         <Space>
-                            <Form.Item name="avatar" noStyle>
-                                <Input style={{ width: 250 }} placeholder="图片URL" />
+                            <Form.Item name="avatar" hidden>
+                                <Input />
                             </Form.Item>
                             <Upload
                                 showUploadList={false}
@@ -473,15 +473,15 @@ const UserProfile = () => {
                                     }
                                 }}
                             >
-                                <Button icon={<UploadOutlined />}>上传</Button>
+                                <Button icon={<UploadOutlined />}>点击上传头像</Button>
                             </Upload>
                         </Space>
                     </Form.Item>
 
                     <Form.Item label="背景图">
                         <Space>
-                            <Form.Item name="backgroundImage" noStyle>
-                                <Input style={{ width: 250 }} placeholder="图片URL" />
+                            <Form.Item name="backgroundImage" hidden>
+                                <Input />
                             </Form.Item>
                             <Upload
                                 showUploadList={false}
@@ -491,7 +491,14 @@ const UserProfile = () => {
                                 onChange={(info) => {
                                     if (info.file.status === 'done') {
                                         if (info.file.response.success) {
-                                            form.setFieldsValue({ backgroundImage: info.file.response.url });
+                                            const newUrl = info.file.response.url;
+                                            form.setFieldsValue({ backgroundImage: newUrl });
+                                            
+                                            // Optimistic update for UI
+                                            if (isOwnProfile) {
+                                                setUserProfile(prev => ({ ...prev, backgroundImage: newUrl }));
+                                            }
+
                                             message.success('上传成功');
                                         } else {
                                             message.error('上传失败');
@@ -499,7 +506,7 @@ const UserProfile = () => {
                                     }
                                 }}
                             >
-                                <Button icon={<UploadOutlined />}>上传</Button>
+                                <Button icon={<UploadOutlined />}>点击上传背景图</Button>
                             </Upload>
                         </Space>
                     </Form.Item>
