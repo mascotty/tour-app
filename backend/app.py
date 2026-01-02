@@ -338,5 +338,131 @@ def update_tour(tour_id):
 
 
 
+
+COMMENT_FILE = 'comments.json'
+
+def load_comments():
+    if not os.path.exists(COMMENT_FILE):
+        return []
+    with open(COMMENT_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_comments(comments):
+    with open(COMMENT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(comments, f, ensure_ascii=False, indent=2)
+
+@app.route('/api/comments', methods=['GET'])
+def get_comments():
+    tour_id = request.args.get('tour_id', type=int)
+    if not tour_id:
+        return jsonify([])
+    
+    comments = load_comments()
+    # Filter comments for this tour
+    tour_comments = [c for c in comments if c.get('tour_id') == tour_id]
+    
+    # Inject user avatars
+    users = load_users()
+    user_map = {u['username']: u.get('avatar', '') for u in users}
+    
+    for c in tour_comments:
+        c['avatar'] = user_map.get(c['username'], '')
+        
+    return jsonify(tour_comments)
+
+@app.route('/api/comments', methods=['POST'])
+def add_comment():
+    data = request.get_json()
+    username = data.get('username')
+    tour_id = data.get('tour_id')
+    content = data.get('content')
+    parent_id = data.get('parent_id') # Can be None
+    
+    if not username or not tour_id or not content:
+        return jsonify({'success': False, 'message': 'Missing parameters'})
+        
+    comments = load_comments()
+    new_id = max([c['id'] for c in comments], default=0) + 1
+    
+    new_comment = {
+        'id': new_id,
+        'tour_id': tour_id,
+        'parent_id': parent_id,
+        'username': username,
+        'content': content,
+        'created_at': datetime.now().isoformat(),
+        'likes': []
+    }
+    
+    comments.append(new_comment)
+    save_comments(comments)
+    
+    return jsonify({'success': True, 'comment': new_comment})
+
+@app.route('/api/comments/<int:comment_id>', methods=['DELETE'])
+def delete_comment(comment_id):
+    username = request.args.get('username')
+    if not username:
+        return jsonify({'success': False, 'message': 'Auth required'}), 401
+        
+    comments = load_comments()
+    comment = next((c for c in comments if c['id'] == comment_id), None)
+    
+    if not comment:
+        return jsonify({'success': False, 'message': 'Comment not found'}), 404
+        
+    if comment['username'] != username:
+        return jsonify({'success': False, 'message': 'Permission denied'}), 403
+        
+    # If it's a parent comment, delete its replies too? 
+    # Usually yes. Let's find all descendants.
+    # Simple approach: delete this comment and any comment with parent_id == comment_id
+    ids_to_delete = {comment_id}
+    
+    # Find direct children (only 1 level nesting usually, but let's be safe)
+    # If we support multi-level, we need recursion. Let's assume 1 level for now or simple recursion.
+    # Loop to find children
+    while True:
+        added = False
+        for c in comments:
+            if c['id'] not in ids_to_delete and c.get('parent_id') in ids_to_delete:
+                ids_to_delete.add(c['id'])
+                added = True
+        if not added:
+            break
+            
+    new_comments = [c for c in comments if c['id'] not in ids_to_delete]
+    save_comments(new_comments)
+    
+    return jsonify({'success': True})
+
+@app.route('/api/comments/<int:comment_id>/like', methods=['POST'])
+def like_comment(comment_id):
+    data = request.get_json()
+    username = data.get('username')
+    
+    if not username:
+        return jsonify({'success': False, 'message': 'Auth required'}), 401
+        
+    comments = load_comments()
+    comment = next((c for c in comments if c['id'] == comment_id), None)
+    
+    if not comment:
+        return jsonify({'success': False, 'message': 'Comment not found'}), 404
+        
+    if 'likes' not in comment:
+        comment['likes'] = []
+        
+    if username in comment['likes']:
+        comment['likes'].remove(username)
+        action = 'unlike'
+    else:
+        comment['likes'].append(username)
+        action = 'like'
+        
+    save_comments(comments)
+    
+    return jsonify({'success': True, 'likes': comment['likes'], 'action': action})
+
 if __name__ == '__main__':
     app.run(debug=True)

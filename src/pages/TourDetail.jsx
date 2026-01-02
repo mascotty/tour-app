@@ -98,10 +98,11 @@
 
 // export default TourDetail;
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Card, Button, Descriptions, Image, Divider, Avatar, message } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { Card, Button, Descriptions, Image, Divider, Avatar, message, List, Input, Space, Tooltip, Popconfirm } from 'antd';
+import { HeartOutlined, HeartFilled, LikeOutlined, LikeFilled, MessageOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 
 const api = import.meta.env.VITE_API_BASE;
 
@@ -112,14 +113,18 @@ const TourDetail = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
+    // 评论相关状态
+    const [comments, setComments] = useState([]);
+    const [commentContent, setCommentContent] = useState('');
+    const [replyingTo, setReplyingTo] = useState(null); // 当前正在回复的评论ID
+    const [replyContent, setReplyContent] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
     useEffect(() => {
         const fetchTour = async () => {
             try {
                 const res = await axios.get(`${api}/api/tours/${id}`);
-                console.log("后端返回的tour对象：", res.data); // ✅看这里有没有 avatar 字段
                 setTour(res.data);
-                // console.log("头像链接", tour.avatar || `https://api.dicebear.com/7.x/thumbs/svg?seed=${tour.username}`);
-
             } catch {
                 setTour(null);
             }
@@ -140,7 +145,17 @@ const TourDetail = () => {
 
         fetchTour();
         fetchFavorites();
+        fetchComments();
     }, [id]);
+
+    const fetchComments = async () => {
+        try {
+            const res = await axios.get(`${api}/api/comments?tour_id=${id}`);
+            setComments(res.data);
+        } catch (err) {
+            console.error("获取评论失败", err);
+        }
+    };
 
     const toggleFavorite = async () => {
         if (!user || !user.username) {
@@ -170,11 +185,175 @@ const TourDetail = () => {
         }
     };
 
+    // 提交评论
+    const handleSubmitComment = async () => {
+        if (!user) {
+            message.warning("请先登录后评论");
+            return;
+        }
+        if (!commentContent.trim()) {
+            message.warning("请输入评论内容");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await axios.post(`${api}/api/comments`, {
+                username: user.username,
+                tour_id: Number(id),
+                content: commentContent
+            });
+            message.success("评论成功");
+            setCommentContent('');
+            fetchComments();
+        } catch (err) {
+            message.error("评论失败");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    // 提交回复
+    const handleSubmitReply = async (parentId) => {
+        if (!user) {
+            message.warning("请先登录后评论");
+            return;
+        }
+        if (!replyContent.trim()) {
+            message.warning("请输入回复内容");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await axios.post(`${api}/api/comments`, {
+                username: user.username,
+                tour_id: Number(id),
+                content: replyContent,
+                parent_id: parentId
+            });
+            message.success("回复成功");
+            setReplyContent('');
+            setReplyingTo(null);
+            fetchComments();
+        } catch (err) {
+            message.error("回复失败");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    // 删除评论
+    const handleDeleteComment = async (commentId) => {
+        try {
+            await axios.delete(`${api}/api/comments/${commentId}?username=${user.username}`);
+            message.success("删除成功");
+            fetchComments();
+        } catch (err) {
+            message.error("删除失败");
+        }
+    };
+
+    // 点赞评论
+    const handleLikeComment = async (commentId) => {
+        if (!user) {
+            message.warning("请先登录");
+            return;
+        }
+        try {
+            await axios.post(`${api}/api/comments/${commentId}/like`, {
+                username: user.username
+            });
+            fetchComments(); // 刷新以更新点赞数
+        } catch (err) {
+            message.error("操作失败");
+        }
+    };
+
     if (!tour) {
         return <div style={{ padding: 20 }}>线路不存在或加载中...</div>;
     }
 
     const isFavorited = favorites.includes(Number(id));
+
+    // 处理评论树
+    const rootComments = comments.filter(c => !c.parent_id);
+    const getReplies = (parentId) => comments.filter(c => c.parent_id === parentId);
+
+    // 单个评论组件
+    const CommentItem = ({ comment, isReply = false }) => {
+        const isLiked = comment.likes && comment.likes.includes(user?.username);
+        const replies = getReplies(comment.id);
+        
+        return (
+            <div style={{ display: 'flex', marginBottom: 16, marginTop: isReply ? 16 : 0 }}>
+                <Avatar 
+                    src={comment.avatar || `https://api.dicebear.com/7.x/thumbs/png?seed=${comment.username}`} 
+                    style={{ marginRight: 12, flexShrink: 0 }} 
+                />
+                <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: 14 }}>{comment.username}</span>
+                        <span style={{ color: '#999', fontSize: 12 }}>
+                            {moment(comment.created_at).format('YYYY-MM-DD HH:mm')}
+                        </span>
+                    </div>
+                    <div style={{ margin: '4px 0', fontSize: 14, color: '#333' }}>
+                        {comment.content}
+                    </div>
+                    
+                    <Space size={16} style={{ fontSize: 12, color: '#666' }}>
+                        <span 
+                            style={{ cursor: 'pointer', color: isLiked ? '#eb2f96' : 'inherit' }} 
+                            onClick={() => handleLikeComment(comment.id)}
+                        >
+                            {isLiked ? <LikeFilled /> : <LikeOutlined />} {comment.likes?.length || 0}
+                        </span>
+                        <span 
+                            style={{ cursor: 'pointer' }} 
+                            onClick={() => {
+                                if (!user) return message.warning("请先登录");
+                                setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                                setReplyContent('');
+                            }}
+                        >
+                            <MessageOutlined /> 回复
+                        </span>
+                        {user?.username === comment.username && (
+                            <Popconfirm title="确定删除这条评论吗？" onConfirm={() => handleDeleteComment(comment.id)}>
+                                <span style={{ cursor: 'pointer', color: '#ff4d4f' }}>
+                                    <DeleteOutlined /> 删除
+                                </span>
+                            </Popconfirm>
+                        )}
+                    </Space>
+
+                    {/* 回复输入框 */}
+                    {replyingTo === comment.id && (
+                        <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                            <Input 
+                                value={replyContent} 
+                                onChange={e => setReplyContent(e.target.value)} 
+                                placeholder={`回复 @${comment.username}...`} 
+                            />
+                            <Button type="primary" size="small" onClick={() => handleSubmitReply(comment.id)} loading={submitting}>
+                                发送
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* 递归渲染回复 */}
+                    {replies.length > 0 && (
+                        <div style={{ background: '#fafafa', padding: 12, marginTop: 12, borderRadius: 8 }}>
+                            {replies.map(reply => (
+                                <CommentItem key={reply.id} comment={reply} isReply={true} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="container" style={{ padding: '20px' }}>
@@ -293,8 +472,37 @@ const TourDetail = () => {
 
 
 
-                        {/* 预留评论区 */}
-                        <Divider style={{ marginTop: 12 }}>评论区（待接入）</Divider>
+                        {/* 评论区 */}
+                        <Divider style={{ marginTop: 24 }}>评论区 ({comments.length})</Divider>
+                        
+                        {/* 发表评论输入框 */}
+                        <div style={{ marginBottom: 24 }}>
+                            <Input.TextArea 
+                                rows={3} 
+                                value={commentContent}
+                                onChange={e => setCommentContent(e.target.value)}
+                                placeholder="说点什么吧..."
+                                style={{ marginBottom: 12 }}
+                            />
+                            <div style={{ textAlign: 'right' }}>
+                                <Button type="primary" onClick={handleSubmitComment} loading={submitting}>
+                                    发表评论
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* 评论列表 */}
+                        <div style={{ maxHeight: 600, overflowY: 'auto' }}>
+                            {rootComments.length > 0 ? (
+                                rootComments.map(comment => (
+                                    <CommentItem key={comment.id} comment={comment} />
+                                ))
+                            ) : (
+                                <div style={{ textAlign: 'center', color: '#999', padding: 20 }}>
+                                    暂无评论，快来抢沙发吧~
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                 </div>
