@@ -112,6 +112,11 @@ const UserProfile = () => {
         axios.get(`${api}/api/tours?username=${username}`)
             .then(res => setTours(res.data))
             .catch(() => setTours([]));
+        
+        // Fetch all tours to filter favorites (since backend doesn't return full favorite tour objects yet)
+        axios.get(`${api}/api/tours`)
+            .then(res => setAllTours(res.data))
+            .catch(() => setAllTours([]));
     }, [username]);
 
     // 获取当前登录用户收藏 (仅用于显示收藏状态)
@@ -173,6 +178,13 @@ const UserProfile = () => {
             message.success('个人资料更新成功');
             setIsEditModalVisible(false);
             fetchUserProfile(); // 刷新资料
+            
+            // If editing own profile, update localStorage and notify Header
+            if (isOwnProfile) {
+                const updatedUser = { ...currentUser, ...values };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                window.dispatchEvent(new Event('user-updated'));
+            }
         } catch (error) {
             console.error('更新失败', error);
             message.error('更新失败，请重试');
@@ -213,6 +225,9 @@ const UserProfile = () => {
 
     // Calculate total favorites from tours
     const totalFavorites = tours.reduce((sum, tour) => sum + (tour.favoriteCount || 0), 0);
+    
+    // Filter favorite tours
+    const favoriteTours = allTours.filter(tour => favorites.includes(tour.id));
 
     if (!userProfile) return <div style={{ padding: 40, textAlign: 'center' }}>加载中...</div>;
 
@@ -366,19 +381,48 @@ const UserProfile = () => {
                         key: 'collections',
                         label: '收藏',
                         children: (
-                             <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
-                                 <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
-                                 这里空空如也
-                             </div>
-                        )
-                    },
-                    {
-                        key: 'likes',
-                        label: '赞过',
-                        children: (
-                            <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
-                                <div style={{ fontSize: 40, marginBottom: 10 }}>❤️</div>
-                                还没有赞过任何内容
+                            <div style={{ padding: '0 10px' }}>
+                                <Row gutter={[10, 10]}>
+                                    {favoriteTours.map(tour => (
+                                        <Col xs={12} sm={12} md={8} key={tour.id}>
+                                            <Card
+                                                hoverable
+                                                style={{ borderRadius: 8, overflow: 'hidden' }}
+                                                bodyStyle={{ padding: 8 }}
+                                                cover={
+                                                    <div style={{ position: 'relative', paddingTop: '133%', background: '#f0f0f0' }}>
+                                                        <img
+                                                            alt={tour.name}
+                                                            src={tour.mainImage}
+                                                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                                                            onClick={() => navigate(`/tours/${tour.id}`)}
+                                                        />
+                                                    </div>
+                                                }
+                                            >
+                                                <div onClick={() => navigate(`/tours/${tour.id}`)} style={{ fontSize: 14, fontWeight: 500, marginBottom: 8, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: '1.4' }}>
+                                                    {tour.name}
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                        <Avatar size={16} src={tour.avatar} />
+                                                        <span style={{ fontSize: 10, color: '#666', maxWidth: 60, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{tour.username}</span>
+                                                    </div>
+                                                    <div onClick={() => toggleFavorite(tour.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                        {favorites.includes(tour.id) ? <HeartFilled style={{ color: '#ff2442', fontSize: 12 }} /> : <HeartOutlined style={{ color: '#999', fontSize: 12 }} />}
+                                                        <span style={{ fontSize: 12, color: '#999' }}>{tour.favoriteCount || 0}</span>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
+                                {favoriteTours.length === 0 && (
+                                    <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+                                        <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+                                        这里空空如也
+                                    </div>
+                                )}
                             </div>
                         )
                     }
@@ -411,7 +455,17 @@ const UserProfile = () => {
                                 onChange={(info) => {
                                     if (info.file.status === 'done') {
                                         if (info.file.response.success) {
-                                            form.setFieldsValue({ avatar: info.file.response.url });
+                                            const newUrl = info.file.response.url;
+                                            form.setFieldsValue({ avatar: newUrl });
+                                            
+                                            // Optimistic update for UI
+                                            if (isOwnProfile) {
+                                                setUserProfile(prev => ({ ...prev, avatar: newUrl }));
+                                                const updatedUser = { ...currentUser, avatar: newUrl };
+                                                localStorage.setItem('user', JSON.stringify(updatedUser));
+                                                window.dispatchEvent(new Event('user-updated'));
+                                            }
+                                            
                                             message.success('上传成功');
                                         } else {
                                             message.error('上传失败');

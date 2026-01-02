@@ -436,12 +436,28 @@ const Header = () => {
     const uploadRef = useRef();
 
     useEffect(() => {
-        const stored = localStorage.getItem('user');
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            setUser(parsed);
-            setAvatarUrl(parsed.avatar);
-        }
+        const checkUser = () => {
+            const stored = localStorage.getItem('user');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                setUser(parsed);
+                setAvatarUrl(parsed.avatar);
+                // Also update version to force refresh if url is same but content changed (though url usually changes)
+                setAvatarVersion(Date.now());
+            } else {
+                setUser(null);
+                setAvatarUrl(null);
+            }
+        };
+
+        checkUser();
+
+        // Listen for custom event 'user-updated'
+        window.addEventListener('user-updated', checkUser);
+        
+        return () => {
+            window.removeEventListener('user-updated', checkUser);
+        };
     }, [location.pathname]);
 
     const handleLogout = () => {
