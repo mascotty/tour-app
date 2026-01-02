@@ -477,6 +477,8 @@ const Header = () => {
     const handleMenuClick = ({ key }) => {
         if (key === 'my-tours') {
             navigate('/my-tours');
+        } else if (key === 'my-profile') {
+            navigate(`/user/${user.username}`);
         } else if (key === 'logout') {
             handleLogout();
         } else if (key === 'upload') {
@@ -500,6 +502,9 @@ const Header = () => {
                 }}
             />
             <Menu onClick={handleMenuClick}>
+                <Menu.Item key="my-profile" icon={<UserOutlined />}>
+                    我的主页
+                </Menu.Item>
                 <Menu.Item key="my-tours" icon={<FileTextOutlined />}>
                     我的发布
                 </Menu.Item>

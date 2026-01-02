@@ -211,6 +211,9 @@ const UserProfile = () => {
     const isOwnProfile = currentUser && currentUser.username === username;
     const isFollowing = userProfile && currentUser && userProfile.followers && userProfile.followers.includes(currentUser.username);
 
+    // Calculate total favorites from tours
+    const totalFavorites = tours.reduce((sum, tour) => sum + (tour.favoriteCount || 0), 0);
+
     if (!userProfile) return <div style={{ padding: 40, textAlign: 'center' }}>加载中...</div>;
 
     return (
