@@ -67,8 +67,8 @@
 // export default UserProfile;
 
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Avatar, message, Button, Tabs, Tag, Modal, Form, Input, Radio, Space } from 'antd';
-import { HeartOutlined, HeartFilled, EnvironmentOutlined, ManOutlined, WomanOutlined, EditOutlined, SettingOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Avatar, message, Button, Tabs, Tag, Modal, Form, Input, Radio, Space, Upload } from 'antd';
+import { HeartOutlined, HeartFilled, EnvironmentOutlined, ManOutlined, WomanOutlined, EditOutlined, SettingOutlined, UploadOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { checkLoginAndRun } from '../utils/checkLoginAndRun';
@@ -304,7 +304,7 @@ const UserProfile = () => {
                         <span style={{ fontWeight: 'bold' }}>{userProfile.followers ? userProfile.followers.length : 0}</span> <span style={{ color: '#999', fontSize: 12 }}>粉丝</span>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <span style={{ fontWeight: 'bold' }}>1.2k</span> <span style={{ color: '#999', fontSize: 12 }}>获赞与收藏</span>
+                        <span style={{ fontWeight: 'bold' }}>{totalFavorites}</span> <span style={{ color: '#999', fontSize: 12 }}>收藏数</span>
                     </div>
                 </div>
             </div>
@@ -398,11 +398,56 @@ const UserProfile = () => {
                     onFinish={handleEditSubmit}
                     initialValues={{ gender: 'secret' }}
                 >
-                    <Form.Item name="avatar" label="头像链接">
-                        <Input placeholder="输入图片URL" />
+                    <Form.Item label="头像">
+                        <Space>
+                            <Form.Item name="avatar" noStyle>
+                                <Input style={{ width: 250 }} placeholder="图片URL" />
+                            </Form.Item>
+                            <Upload
+                                showUploadList={false}
+                                action={`${api}/upload-tour-image`}
+                                data={{ username: username }}
+                                name="file"
+                                onChange={(info) => {
+                                    if (info.file.status === 'done') {
+                                        if (info.file.response.success) {
+                                            form.setFieldsValue({ avatar: info.file.response.url });
+                                            message.success('上传成功');
+                                        } else {
+                                            message.error('上传失败');
+                                        }
+                                    }
+                                }}
+                            >
+                                <Button icon={<UploadOutlined />}>上传</Button>
+                            </Upload>
+                        </Space>
                     </Form.Item>
-                    <Form.Item name="backgroundImage" label="背景图链接">
-                        <Input placeholder="输入图片URL" />
+
+                    <Form.Item label="背景图">
+                        <Space>
+                            <Form.Item name="backgroundImage" noStyle>
+                                <Input style={{ width: 250 }} placeholder="图片URL" />
+                            </Form.Item>
+                            <Upload
+                                showUploadList={false}
+                                action={`${api}/upload-tour-image`}
+                                data={{ username: username }}
+                                name="file"
+                                onChange={(info) => {
+                                    if (info.file.status === 'done') {
+                                        if (info.file.response.success) {
+                                            form.setFieldsValue({ backgroundImage: info.file.response.url });
+                                            message.success('上传成功');
+                                        } else {
+                                            message.error('上传失败');
+                                        }
+                                    }
+                                }}
+                            >
+                                <Button icon={<UploadOutlined />}>上传</Button>
+                            </Upload>
+                        </Space>
                     </Form.Item>
                     <Form.Item name="nickname" label="昵称" rules={[{ required: true, message: '请输入昵称' }]}>
                         <Input maxLength={20} showCount />
