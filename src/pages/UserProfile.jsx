@@ -272,17 +272,14 @@ const UserProfile = () => {
                                 编辑资料
                             </Button>
                         ) : (
-                            <Space>
-                                <Button 
-                                    shape="round" 
-                                    type={isFollowing ? "default" : "primary"}
-                                    style={isFollowing ? {} : { background: '#ff2442', borderColor: '#ff2442' }}
-                                    onClick={handleFollow}
-                                >
-                                    {isFollowing ? '已关注' : '关注'}
-                                </Button>
-                                <Button shape="circle" icon={<SettingOutlined />} />
-                            </Space>
+                            <Button 
+                                shape="round" 
+                                type={isFollowing ? "default" : "primary"}
+                                style={isFollowing ? {} : { background: '#ff2442', borderColor: '#ff2442' }}
+                                onClick={handleFollow}
+                            >
+                                {isFollowing ? '已关注' : '关注'}
+                            </Button>
                         )}
                     </div>
                 </div>
