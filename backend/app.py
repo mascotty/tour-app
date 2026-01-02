@@ -60,9 +60,62 @@ def login():
         'message': '登录成功',
         'user': {
             'username': user['username'],
-            'avatar': user.get('avatar', '')  # 没有头像时默认空字符串
+            'nickname': user.get('nickname', user['username']),
+            'avatar': user.get('avatar', ''),
+            'bio': user.get('bio', ''),
+            'gender': user.get('gender', 'secret'), # male, female, secret
+            'location': user.get('location', '')
         }
     })
+
+
+@app.route('/api/users/<username>', methods=['GET'])
+def get_user_profile(username):
+    users = load_users()
+    user = next((u for u in users if u['username'] == username), None)
+    
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+    # Return public info
+    return jsonify({
+        'username': user['username'],
+        'nickname': user.get('nickname', user['username']),
+        'avatar': user.get('avatar', ''),
+        'bio': user.get('bio', '这个人很懒，什么都没写~'),
+        'gender': user.get('gender', 'secret'),
+        'location': user.get('location', '未知IP'),
+        'backgroundImage': user.get('backgroundImage', '')
+    })
+
+@app.route('/api/users/<username>', methods=['PUT'])
+def update_user_profile(username):
+    data = request.get_json()
+    # Security check: ensure the requester is the user (simplified for this mock)
+    # In real app, check session/token. Here we assume client behaves.
+    
+    users = load_users()
+    updated = False
+    
+    for user in users:
+        if user['username'] == username:
+            # Update fields
+            if 'nickname' in data: user['nickname'] = data['nickname']
+            if 'bio' in data: user['bio'] = data['bio']
+            if 'gender' in data: user['gender'] = data['gender']
+            if 'location' in data: user['location'] = data['location']
+            if 'avatar' in data: user['avatar'] = data['avatar'] # In case they change it via URL or upload flow updates it
+            if 'backgroundImage' in data: user['backgroundImage'] = data['backgroundImage']
+            
+            updated = True
+            break
+            
+    if updated:
+        save_users(users)
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
 
 
 

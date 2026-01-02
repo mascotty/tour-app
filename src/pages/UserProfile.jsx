@@ -67,55 +67,67 @@
 // export default UserProfile;
 
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Avatar, message } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { Card, Row, Col, Avatar, message, Button, Tabs, Tag, Modal, Form, Input, Radio, Space } from 'antd';
+import { HeartOutlined, HeartFilled, EnvironmentOutlined, ManOutlined, WomanOutlined, EditOutlined, SettingOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { checkLoginAndRun } from '../utils/checkLoginAndRun';
-import { Link } from 'react-router-dom';
-
 
 const api = import.meta.env.VITE_API_BASE;
 
 const UserProfile = () => {
     const { username } = useParams();
     const navigate = useNavigate();
+    const [form] = Form.useForm();
 
     const [tours, setTours] = useState([]);
     const [favorites, setFavorites] = useState([]);
+    const [userProfile, setUserProfile] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [activeTab, setActiveTab] = useState('notes');
 
-    // 安全获取作者头像
-    const firstTour = tours.length > 0 ? tours[0] : null;
+    // 获取当前登录用户
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setCurrentUser(user);
+    }, []);
 
-    // 获取用户游记
+    // 获取用户个人资料
+    const fetchUserProfile = () => {
+        axios.get(`${api}/api/users/${username}`)
+            .then(res => setUserProfile(res.data))
+            .catch(err => {
+                console.error("获取用户信息失败", err);
+                message.error("获取用户信息失败");
+            });
+    };
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, [username]);
+
+    // 获取用户发布的游记
     useEffect(() => {
         axios.get(`${api}/api/tours?username=${username}`)
-            .then(res => {
-                console.log("返回的游记数据：", res.data);  // 👈调试
-                setTours(res.data)
-            })
+            .then(res => setTours(res.data))
             .catch(() => setTours([]));
     }, [username]);
 
-    // 获取当前登录用户收藏
+    // 获取当前登录用户收藏 (仅用于显示收藏状态)
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.username) return;
-
-        axios.get(`${api}/api/favorites?username=${user.username}`)
+        if (!currentUser) return;
+        axios.get(`${api}/api/favorites?username=${currentUser.username}`)
             .then(res => {
                 setFavorites(res.data);
                 localStorage.setItem('favorites', JSON.stringify(res.data));
             })
-            .catch(err => {
-                console.error('获取收藏失败', err);
-            });
-    }, []);
+            .catch(err => console.error('获取收藏失败', err));
+    }, [currentUser]);
 
     const toggleFavorite = (id) => {
         checkLoginAndRun(async () => {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user || !user.username) {
+            if (!currentUser) {
                 message.error("用户信息缺失");
                 return;
             }
@@ -131,7 +143,7 @@ const UserProfile = () => {
 
             try {
                 await axios.post(`${api}/api/favorites`, {
-                    username: user.username,
+                    username: currentUser.username,
                     tour_id: id,
                     action: isFavorited ? 'remove' : 'add'
                 });
@@ -142,134 +154,220 @@ const UserProfile = () => {
         }, navigate);
     };
 
-    return (
-        <div style={{ padding: 24 }}>
-            {/* 顶部作者信息 - 分为左右两个区域 */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                {/* 左侧：头像和用户名，左对齐 */}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar
-                        src={firstTour?.avatar || `https://api.dicebear.com/7.x/thumbs/svg?seed=${username}`}
-                        size={32}
-                        style={{ marginRight: 16 }}
-                    />
-                    <div style={{ fontWeight: 'bold', fontSize: 16 }}>{username}</div>
-                </div>
+    const handleEditSubmit = async (values) => {
+        try {
+            await axios.put(`${api}/api/users/${username}`, values);
+            message.success('个人资料更新成功');
+            setIsEditModalVisible(false);
+            fetchUserProfile(); // 刷新资料
+        } catch (error) {
+            console.error('更新失败', error);
+            message.error('更新失败，请重试');
+        }
+    };
 
-                {/* 右侧：空占位，保持与左侧对称 */}
-                <div style={{ width: 32 + 16 + 100 }} /> {/* 宽度约等于左侧头像+间距+用户名的总宽度 */}
+    const isOwnProfile = currentUser && currentUser.username === username;
+
+    if (!userProfile) return <div style={{ padding: 40, textAlign: 'center' }}>加载中...</div>;
+
+    return (
+        <div style={{ maxWidth: 800, margin: '0 auto', paddingBottom: 40 }}>
+            {/* 顶部背景图 */}
+            <div style={{
+                height: 200,
+                background: userProfile.backgroundImage ? `url(${userProfile.backgroundImage}) center/cover no-repeat` : 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+                borderRadius: '0 0 16px 16px',
+                position: 'relative',
+                marginBottom: 60
+            }}>
+                {/* 返回按钮 (可选) */}
             </div>
 
-            {/* 标题单独一行，居中显示 */}
-            <div style={{ color: '#333', fontSize: 22, textAlign: 'center', margin: '0 0 24px 0' }}>📌TA发布的游记</div>
-            <span> </span>
+            {/* 个人信息区域 */}
+            <div style={{ padding: '0 20px', position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: -50, marginBottom: 16 }}>
+                    {/* 头像 */}
+                    <Avatar
+                        src={userProfile.avatar || `https://api.dicebear.com/7.x/thumbs/svg?seed=${username}`}
+                        size={100}
+                        style={{
+                            border: '4px solid #fff',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                    />
+                    
+                    {/* 编辑/关注按钮 */}
+                    <div>
+                        {isOwnProfile ? (
+                            <Button 
+                                shape="round" 
+                                icon={<EditOutlined />} 
+                                onClick={() => {
+                                    form.setFieldsValue(userProfile);
+                                    setIsEditModalVisible(true);
+                                }}
+                            >
+                                编辑资料
+                            </Button>
+                        ) : (
+                            <Space>
+                                <Button shape="round" type="primary" style={{ background: '#ff2442', borderColor: '#ff2442' }}>关注</Button>
+                                <Button shape="circle" icon={<SettingOutlined />} />
+                            </Space>
+                        )}
+                    </div>
+                </div>
 
-            {/* 游记卡片列表 */}
-            <Row gutter={[16, 16]}>
-                {tours.map(tour => (
-                    <Col xs={24} sm={12} md={8} lg={6} xl={6} key={tour.id}>
-                        <Card
-                            hoverable
-                            onClick={() => navigate(`/tours/${tour.id}`)}
-                            style={{
-                                borderRadius: 12,
-                                overflow: 'hidden',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                                cursor: 'pointer',
-                                border: 'none',
-                                position: 'relative',
-                            }}
-                            cover={
-                                <div style={{ position: 'relative' }}>
-                                    <img
-                                        alt={tour.name}
-                                        src={tour.mainImage || 'https://via.placeholder.com/300x200?text=No+Image'}
-                                        style={{ height: 200, objectFit: 'cover', width: '100%' }}
-                                    />
-                                    {/* ❤️ 收藏按钮浮动在右上角 */}
-                                    <div
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleFavorite(tour.id);
-                                        }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: 10,
-                                            right: 10,
-                                            background: 'rgba(255,255,255,0.85)',
-                                            borderRadius: '50%',
-                                            padding: 6,
-                                            cursor: 'pointer',
-                                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                                            zIndex: 2,
-                                        }}
-                                    >
-                                        {favorites.includes(tour.id) ? (
-                                            <HeartFilled style={{ color: 'purple', fontSize: 18 }} />
-                                        ) : (
-                                            <HeartOutlined style={{ color: '#999', fontSize: 18 }} />
-                                        )}
-                                    </div>
-                                </div>
-                            }
-                        >
-                            <Card.Meta
-                                title={tour.name}
-                                description={
-                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                                        <div
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/user/${tour.username}`);
-                                            }}
-                                            style={{
-                                                flexShrink: 0,
-                                                cursor: 'pointer',
-                                                transition: 'transform 0.2s ease',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.transform = 'scale(1.15)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.transform = 'scale(1)';
-                                            }}
-                                        >
-                                            <Avatar
-                                                size={18}
-                                                src={
-                                                    tour.avatar && tour.avatar.startsWith('http')
-                                                        ? tour.avatar
-                                                        : `https://api.dicebear.com/7.x/thumbs/svg?seed=${tour.username}`
+                {/* 名字和ID */}
+                <h1 style={{ fontSize: 24, fontWeight: 'bold', margin: '0 0 4px 0' }}>{userProfile.nickname || username}</h1>
+                <div style={{ color: '#999', fontSize: 12, marginBottom: 12 }}>小红书号：{username}</div>
+
+                {/* 简介 */}
+                <div style={{ fontSize: 14, color: '#333', marginBottom: 12, whiteSpace: 'pre-wrap' }}>
+                    {userProfile.bio || '这个人很懒，什么都没写~'}
+                </div>
+
+                {/* 标签：性别、位置等 */}
+                <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                    {userProfile.gender !== 'secret' && (
+                        <Tag color={userProfile.gender === 'male' ? 'blue' : 'magenta'} style={{ borderRadius: 12, padding: '0 8px' }}>
+                            {userProfile.gender === 'male' ? <ManOutlined /> : <WomanOutlined />} 
+                            {userProfile.gender === 'male' ? ' 男' : ' 女'}
+                        </Tag>
+                    )}
+                    {userProfile.location && (
+                        <Tag style={{ borderRadius: 12, padding: '0 8px', background: '#f5f5f5', border: 'none', color: '#666' }}>
+                            <EnvironmentOutlined /> {userProfile.location}
+                        </Tag>
+                    )}
+                </div>
+
+                {/* 统计数据 (模拟) */}
+                <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
+                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>12</span> <span style={{ color: '#999', fontSize: 12 }}>关注</span></div>
+                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>348</span> <span style={{ color: '#999', fontSize: 12 }}>粉丝</span></div>
+                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>1.2k</span> <span style={{ color: '#999', fontSize: 12 }}>获赞与收藏</span></div>
+                </div>
+            </div>
+
+            {/* 内容 Tabs */}
+            <Tabs 
+                defaultActiveKey="notes" 
+                centered 
+                size="large"
+                activeKey={activeTab}
+                onChange={setActiveTab}
+                tabBarStyle={{ borderBottom: '1px solid #eee' }}
+                items={[
+                    {
+                        key: 'notes',
+                        label: '笔记',
+                        children: (
+                            <div style={{ padding: '0 10px' }}>
+                                <Row gutter={[10, 10]}>
+                                    {tours.map(tour => (
+                                        <Col xs={12} sm={12} md={8} key={tour.id}>
+                                            <Card
+                                                hoverable
+                                                style={{ borderRadius: 8, overflow: 'hidden' }}
+                                                bodyStyle={{ padding: 8 }}
+                                                cover={
+                                                    <div style={{ position: 'relative', paddingTop: '133%', background: '#f0f0f0' }}>
+                                                        <img
+                                                            alt={tour.name}
+                                                            src={tour.mainImage}
+                                                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                                                            onClick={() => navigate(`/tours/${tour.id}`)}
+                                                        />
+                                                    </div>
                                                 }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '60px',
-                                                overflow: 'hidden',
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    lineHeight: '1.4',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 3,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                }}
                                             >
-                                                {tour.description || '暂无描述'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                }
-                            />
-                        </Card>
-                    </Col>
+                                                <div onClick={() => navigate(`/tours/${tour.id}`)} style={{ fontSize: 14, fontWeight: 500, marginBottom: 8, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: '1.4' }}>
+                                                    {tour.name}
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                        <Avatar size={16} src={userProfile.avatar} />
+                                                        <span style={{ fontSize: 10, color: '#666', maxWidth: 60, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{userProfile.nickname || username}</span>
+                                                    </div>
+                                                    <div onClick={() => toggleFavorite(tour.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                        {favorites.includes(tour.id) ? <HeartFilled style={{ color: '#ff2442', fontSize: 12 }} /> : <HeartOutlined style={{ color: '#999', fontSize: 12 }} />}
+                                                        <span style={{ fontSize: 12, color: '#999' }}>{Math.floor(Math.random() * 100)}</span>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
+                                {tours.length === 0 && <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>暂无笔记</div>}
+                            </div>
+                        )
+                    },
+                    {
+                        key: 'collections',
+                        label: '收藏',
+                        children: (
+                             <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+                                 <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+                                 这里空空如也
+                             </div>
+                        )
+                    },
+                    {
+                        key: 'likes',
+                        label: '赞过',
+                        children: (
+                            <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+                                <div style={{ fontSize: 40, marginBottom: 10 }}>❤️</div>
+                                还没有赞过任何内容
+                            </div>
+                        )
+                    }
+                ]}
+            />
 
-                ))}
-            </Row>
+            {/* 编辑资料弹窗 */}
+            <Modal
+                title="编辑个人资料"
+                open={isEditModalVisible}
+                onCancel={() => setIsEditModalVisible(false)}
+                footer={null}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleEditSubmit}
+                    initialValues={{ gender: 'secret' }}
+                >
+                    <Form.Item name="avatar" label="头像链接">
+                        <Input placeholder="输入图片URL" />
+                    </Form.Item>
+                    <Form.Item name="backgroundImage" label="背景图链接">
+                        <Input placeholder="输入图片URL" />
+                    </Form.Item>
+                    <Form.Item name="nickname" label="昵称" rules={[{ required: true, message: '请输入昵称' }]}>
+                        <Input maxLength={20} showCount />
+                    </Form.Item>
+                    <Form.Item name="bio" label="简介">
+                        <Input.TextArea rows={4} maxLength={100} showCount placeholder="介绍一下你自己..." />
+                    </Form.Item>
+                    <Form.Item name="gender" label="性别">
+                        <Radio.Group>
+                            <Radio value="male">男</Radio>
+                            <Radio value="female">女</Radio>
+                            <Radio value="secret">保密</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item name="location" label="所在地">
+                        <Input placeholder="例如：上海" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" block shape="round" style={{ background: '#ff2442', borderColor: '#ff2442' }}>
+                            保存
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
