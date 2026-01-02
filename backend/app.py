@@ -55,6 +55,24 @@ def login():
     if user['password'] != password:
         return jsonify({'success': False, 'message': '密码错误'})
     
+    # Update location based on IP (Mock implementation for localhost)
+    # In a real app, use a GeoIP library or API
+    ip_address = request.remote_addr
+    # Simple mock logic for demonstration
+    location = "未知IP地区"
+    if ip_address == '127.0.0.1':
+        location = "本地开发环境"
+    
+    # In production (e.g., Render), use X-Forwarded-For header
+    if request.headers.getlist("X-Forwarded-For"):
+        ip_address = request.headers.getlist("X-Forwarded-For")[0]
+        # Here you would call a GeoIP service with the real IP
+        # location = get_location(ip_address)
+        location = f"IP: {ip_address}" # For now just show IP
+
+    user['location'] = location
+    save_users(users)
+    
     return jsonify({
         'success': True,
         'message': '登录成功',
@@ -64,7 +82,9 @@ def login():
             'avatar': user.get('avatar', ''),
             'bio': user.get('bio', ''),
             'gender': user.get('gender', 'secret'), # male, female, secret
-            'location': user.get('location', '')
+            'location': location,
+            'followers': user.get('followers', []),
+            'following': user.get('following', [])
         }
     })
 
@@ -85,7 +105,9 @@ def get_user_profile(username):
         'bio': user.get('bio', '这个人很懒，什么都没写~'),
         'gender': user.get('gender', 'secret'),
         'location': user.get('location', '未知IP'),
-        'backgroundImage': user.get('backgroundImage', '')
+        'backgroundImage': user.get('backgroundImage', ''),
+        'followers': user.get('followers', []),
+        'following': user.get('following', [])
     })
 
 @app.route('/api/users/<username>', methods=['PUT'])
@@ -103,7 +125,7 @@ def update_user_profile(username):
             if 'nickname' in data: user['nickname'] = data['nickname']
             if 'bio' in data: user['bio'] = data['bio']
             if 'gender' in data: user['gender'] = data['gender']
-            if 'location' in data: user['location'] = data['location']
+            # Location is now auto-updated on login, removed from manual edit
             if 'avatar' in data: user['avatar'] = data['avatar'] # In case they change it via URL or upload flow updates it
             if 'backgroundImage' in data: user['backgroundImage'] = data['backgroundImage']
             
@@ -115,6 +137,51 @@ def update_user_profile(username):
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'message': 'User not found'}), 404
+
+@app.route('/api/users/<username>/follow', methods=['POST'])
+def follow_user(username):
+    data = request.get_json()
+    current_username = data.get('follower') # The person who is clicking "Follow"
+    
+    if not current_username:
+         return jsonify({'success': False, 'message': 'Auth required'}), 401
+
+    if current_username == username:
+        return jsonify({'success': False, 'message': 'Cannot follow yourself'}), 400
+
+    users = load_users()
+    target_user = next((u for u in users if u['username'] == username), None)
+    current_user_obj = next((u for u in users if u['username'] == current_username), None)
+    
+    if not target_user or not current_user_obj:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+    # Initialize lists if missing
+    if 'followers' not in target_user: target_user['followers'] = []
+    if 'following' not in current_user_obj: current_user_obj['following'] = []
+    
+    # Toggle logic
+    is_following = current_username in target_user['followers']
+    
+    if is_following:
+        # Unfollow
+        target_user['followers'].remove(current_username)
+        current_user_obj['following'].remove(username)
+        action = 'unfollow'
+    else:
+        # Follow
+        target_user['followers'].append(current_username)
+        current_user_obj['following'].append(username)
+        action = 'follow'
+        
+    save_users(users)
+    
+    return jsonify({
+        'success': True, 
+        'action': action,
+        'followersCount': len(target_user['followers']),
+        'followingCount': len(target_user.get('following', [])) # Target user's following count doesn't change here, but return anyway
+    })
 
 
 
@@ -133,6 +200,15 @@ def save_favorites(data):
     with open(FAVORITE_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+
+
+def get_favorite_counts():
+    favorites_data = load_favorites()
+    counts = {}
+    for username, tour_ids in favorites_data.items():
+        for tour_id in tour_ids:
+            counts[tour_id] = counts.get(tour_id, 0) + 1
+    return counts
 
 @app.route('/api/favorites', methods=['GET'])
 def get_favorites():
@@ -161,7 +237,13 @@ def update_favorites():
         all_data[username] = [tid for tid in all_data[username] if tid != tour_id]
 
     save_favorites(all_data)
-    return jsonify({'success': True, 'favorites': all_data[username]})
+    
+    # Return updated count for this tour so frontend can update immediately if needed
+    fav_counts = get_favorite_counts()
+    new_count = fav_counts.get(tour_id, 0)
+    
+    return jsonify({'success': True, 'favorites': all_data[username], 'newCount': new_count})
+
 
 
 
@@ -194,8 +276,13 @@ def save_tours(tours):
 def get_tour_by_id(tour_id):
     tours = load_tours()
     tour = next((t for t in tours if t['id'] == tour_id), None)
+    
     if tour:
+        # Inject favorite count
+        fav_counts = get_favorite_counts()
+        tour['favoriteCount'] = fav_counts.get(tour_id, 0)
         return jsonify(tour)
+        
     return jsonify({'success': False, 'message': '未找到该游记'}), 404
 
 @app.route('/upload-tour-image', methods=['POST'])
@@ -327,6 +414,9 @@ def get_all_tours():
     tours = load_tours()
     users = load_users()  # 读取用户数据
     user_dict = {u['username']: u.get('avatar', '') for u in users}
+    
+    # Get favorite counts
+    fav_counts = get_favorite_counts()
 
     # 给旧数据补上 searchCount 字段（如果没有）
     updated = False
@@ -337,6 +427,9 @@ def get_all_tours():
 
         # ✅ 加上头像字段
         tour['avatar'] = user_dict.get(tour['username'], '')
+        
+        # ✅ 加上点赞/收藏数
+        tour['favoriteCount'] = fav_counts.get(tour['id'], 0)
 
     # ✅ 获取查询参数
     username = request.args.get('username')

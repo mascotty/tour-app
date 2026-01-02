@@ -141,12 +141,25 @@ const UserProfile = () => {
             localStorage.setItem('favorites', JSON.stringify(updated));
             message.success(isFavorited ? '已取消收藏' : '已添加到收藏');
 
+            // 乐观更新点赞数
+            setTours(prev => prev.map(t => {
+                if (t.id === id) {
+                    return { ...t, favoriteCount: (t.favoriteCount || 0) + (isFavorited ? -1 : 1) };
+                }
+                return t;
+            }));
+
             try {
-                await axios.post(`${api}/api/favorites`, {
+                const res = await axios.post(`${api}/api/favorites`, {
                     username: currentUser.username,
                     tour_id: id,
                     action: isFavorited ? 'remove' : 'add'
                 });
+                
+                // 如果后端返回了最新计数，进行校准
+                if (res.data.newCount !== undefined) {
+                     setTours(prev => prev.map(t => t.id === id ? { ...t, favoriteCount: res.data.newCount } : t));
+                }
             } catch (err) {
                 console.error("同步失败", err);
                 message.error("同步服务器失败");
@@ -165,8 +178,38 @@ const UserProfile = () => {
             message.error('更新失败，请重试');
         }
     };
+    
+    const handleFollow = () => {
+        checkLoginAndRun(async () => {
+            if (!currentUser) return;
+            try {
+                const res = await axios.post(`${api}/api/users/${username}/follow`, {
+                    follower: currentUser.username
+                });
+                
+                if (res.data.success) {
+                     const isFollowing = res.data.action === 'follow';
+                     setUserProfile(prev => ({
+                         ...prev,
+                         followers: isFollowing 
+                             ? [...(prev.followers || []), currentUser.username]
+                             : (prev.followers || []).filter(u => u !== currentUser.username)
+                     }));
+                     message.success(isFollowing ? '已关注' : '已取消关注');
+                }
+            } catch (err) {
+                console.error(err);
+                if (err.response && err.response.data) {
+                    message.error(err.response.data.message);
+                } else {
+                    message.error('操作失败');
+                }
+            }
+        }, navigate);
+    };
 
     const isOwnProfile = currentUser && currentUser.username === username;
+    const isFollowing = userProfile && currentUser && userProfile.followers && userProfile.followers.includes(currentUser.username);
 
     if (!userProfile) return <div style={{ padding: 40, textAlign: 'center' }}>加载中...</div>;
 
@@ -211,7 +254,14 @@ const UserProfile = () => {
                             </Button>
                         ) : (
                             <Space>
-                                <Button shape="round" type="primary" style={{ background: '#ff2442', borderColor: '#ff2442' }}>关注</Button>
+                                <Button 
+                                    shape="round" 
+                                    type={isFollowing ? "default" : "primary"}
+                                    style={isFollowing ? {} : { background: '#ff2442', borderColor: '#ff2442' }}
+                                    onClick={handleFollow}
+                                >
+                                    {isFollowing ? '已关注' : '关注'}
+                                </Button>
                                 <Button shape="circle" icon={<SettingOutlined />} />
                             </Space>
                         )}
@@ -242,11 +292,17 @@ const UserProfile = () => {
                     )}
                 </div>
 
-                {/* 统计数据 (模拟) */}
+                {/* 统计数据 */}
                 <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
-                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>12</span> <span style={{ color: '#999', fontSize: 12 }}>关注</span></div>
-                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>348</span> <span style={{ color: '#999', fontSize: 12 }}>粉丝</span></div>
-                    <div style={{ textAlign: 'center' }}><span style={{ fontWeight: 'bold' }}>1.2k</span> <span style={{ color: '#999', fontSize: 12 }}>获赞与收藏</span></div>
+                    <div style={{ textAlign: 'center' }}>
+                        <span style={{ fontWeight: 'bold' }}>{userProfile.following ? userProfile.following.length : 0}</span> <span style={{ color: '#999', fontSize: 12 }}>关注</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <span style={{ fontWeight: 'bold' }}>{userProfile.followers ? userProfile.followers.length : 0}</span> <span style={{ color: '#999', fontSize: 12 }}>粉丝</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <span style={{ fontWeight: 'bold' }}>1.2k</span> <span style={{ color: '#999', fontSize: 12 }}>获赞与收藏</span>
+                    </div>
                 </div>
             </div>
 
@@ -292,7 +348,7 @@ const UserProfile = () => {
                                                     </div>
                                                     <div onClick={() => toggleFavorite(tour.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2 }}>
                                                         {favorites.includes(tour.id) ? <HeartFilled style={{ color: '#ff2442', fontSize: 12 }} /> : <HeartOutlined style={{ color: '#999', fontSize: 12 }} />}
-                                                        <span style={{ fontSize: 12, color: '#999' }}>{Math.floor(Math.random() * 100)}</span>
+                                                        <span style={{ fontSize: 12, color: '#999' }}>{tour.favoriteCount || 0}</span>
                                                     </div>
                                                 </div>
                                             </Card>
@@ -358,9 +414,7 @@ const UserProfile = () => {
                             <Radio value="secret">保密</Radio>
                         </Radio.Group>
                     </Form.Item>
-                    <Form.Item name="location" label="所在地">
-                        <Input placeholder="例如：上海" />
-                    </Form.Item>
+                    {/* Location field removed as it is now auto-detected */}
                     <Form.Item>
                         <Button type="primary" htmlType="submit" block shape="round" style={{ background: '#ff2442', borderColor: '#ff2442' }}>
                             保存
