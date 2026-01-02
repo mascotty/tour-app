@@ -6,19 +6,19 @@
     "price": 10000,
     "accommodation": "住wasup青旅不到20欧一晚上 简直不要太划算！",
     "username": "zhouzhiwei",
-    "mainImage": "http://localhost:5000/uploads/zhouzhiwei_1753095198_534109180143a2c323f39819fc722b0.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095198_534109180143a2c323f39819fc722b0.jpg",
     "images": [
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_44d39f50f2dc1d5c9b1fbafa9a1565c.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_57eb55c5fffa69f05e72d507724073a.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_68d2013d261b7021ae70d5a072f7c4a.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_49885e11d5337d0f83e1bf64e1a7bec.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_d16699357fe58bc39bbf2fff9a3f9d4.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095375_e98c6e10109e6928ca245a9aad16762.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753095376_f52ceeff587faeacad48109259191ef.jpg"
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_44d39f50f2dc1d5c9b1fbafa9a1565c.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_57eb55c5fffa69f05e72d507724073a.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_68d2013d261b7021ae70d5a072f7c4a.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_49885e11d5337d0f83e1bf64e1a7bec.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_d16699357fe58bc39bbf2fff9a3f9d4.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095375_e98c6e10109e6928ca245a9aad16762.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753095376_f52ceeff587faeacad48109259191ef.jpg"
     ],
     "id": 1,
     "searchCount": 3,
-    "avatar": "http://localhost:5000/uploads/zhouzhiwei_avatar.png",
+    "avatar": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_avatar.png",
     "createdAt": "2025-07-31T09:28:26.764185"
   },
   {
@@ -28,19 +28,19 @@
     "price": "800",
     "accommodation": "住山河与海民宿 风景一级棒！",
     "username": "zhouzhiwei",
-    "mainImage": "http://localhost:5000/uploads/zhouzhiwei_1753100394_19a0ee574630ea9aea8a7fa31d72693.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100394_19a0ee574630ea9aea8a7fa31d72693.jpg",
     "images": [
-      "http://localhost:5000/uploads/zhouzhiwei_1753100426_2a68f82f93be8c5c11ae892c13d7956.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_4bb5e05ddf4e6b87fb9bfe321826726.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_7acfdaf622b9eef7031739a124ababa.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_9ffc55fb4efa084640640b5256af2cf.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_84beb49bb0c7449a19b232c4e07c1cf.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_7922c33c50baecc51d7ecafdbc9c388.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100427_54012cbd57b11d89adda7d73c6402e5.jpg"
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100426_2a68f82f93be8c5c11ae892c13d7956.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_4bb5e05ddf4e6b87fb9bfe321826726.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_7acfdaf622b9eef7031739a124ababa.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_9ffc55fb4efa084640640b5256af2cf.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_84beb49bb0c7449a19b232c4e07c1cf.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_7922c33c50baecc51d7ecafdbc9c388.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100427_54012cbd57b11d89adda7d73c6402e5.jpg"
     ],
     "id": 2,
     "searchCount": 1,
-    "avatar": "http://localhost:5000/uploads/zhouzhiwei_avatar.png",
+    "avatar": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_avatar.png",
     "createdAt": "2025-07-31T09:27:34.772481"
   },
   {
@@ -50,20 +50,20 @@
     "price": "5000",
     "accommodation": "住月牙湾旁边的民宿只要150一晚 真的超级划算！！",
     "username": "zhouzhiwei",
-    "mainImage": "http://localhost:5000/uploads/zhouzhiwei_1753100473_08a0b741a1f424ee17be0c149ac295d.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100473_08a0b741a1f424ee17be0c149ac295d.jpg",
     "images": [
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_1b5b061a7fb04d23504806289d03844.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_08a0b741a1f424ee17be0c149ac295d.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_40bab6b6ff7deaafe28ffdf5508b040.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_778db846ec5379f84c6765c747861a8.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_a8f5e77cac884c467ee909d3d6caad9.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_b678567a164e6f9129c506936080b36.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_c5109bfd54e2e9a278675030ff34d97.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100510_d7e0c704c110caca17983946d184107.jpg"
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_1b5b061a7fb04d23504806289d03844.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_08a0b741a1f424ee17be0c149ac295d.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_40bab6b6ff7deaafe28ffdf5508b040.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_778db846ec5379f84c6765c747861a8.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_a8f5e77cac884c467ee909d3d6caad9.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_b678567a164e6f9129c506936080b36.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_c5109bfd54e2e9a278675030ff34d97.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100510_d7e0c704c110caca17983946d184107.jpg"
     ],
     "id": 3,
     "searchCount": 5,
-    "avatar": "http://localhost:5000/uploads/zhouzhiwei_avatar.png",
+    "avatar": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_avatar.png",
     "createdAt": "2025-07-30T23:39:49.696733"
   },
   {
@@ -72,19 +72,19 @@
     "price": "500",
     "duration": "1天",
     "username": "zhouzhiwei",
-    "mainImage": "http://localhost:5000/uploads/zhouzhiwei_1753100542_d1465bc6cc828b6e3b553ba9f5049f2.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100542_d1465bc6cc828b6e3b553ba9f5049f2.jpg",
     "images": [
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_1278b24ffdae6261faf6611c3f13790.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_d1465bc6cc828b6e3b553ba9f5049f2.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_db8a5b4a97de0172b77dbb940574e73.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_dc035f406c1114fb0f6f2cfbbb3c42f.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_dd0e305d36959d047aa4f1e301a4ce5.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100594_de04dc47a4b8a5d615ac41c30a64f85.jpg",
-      "http://localhost:5000/uploads/zhouzhiwei_1753100595_f3ec353aa66ea82477f427636084a7d.jpg"
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_1278b24ffdae6261faf6611c3f13790.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_d1465bc6cc828b6e3b553ba9f5049f2.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_db8a5b4a97de0172b77dbb940574e73.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_dc035f406c1114fb0f6f2cfbbb3c42f.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_dd0e305d36959d047aa4f1e301a4ce5.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100594_de04dc47a4b8a5d615ac41c30a64f85.jpg",
+      "https://tour-app-2.onrender.com/uploads/zhouzhiwei_1753100595_f3ec353aa66ea82477f427636084a7d.jpg"
     ],
     "id": 4,
     "searchCount": 10,
-    "avatar": "http://localhost:5000/uploads/zhouzhiwei_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_avatar.png"
   },
   {
     "name": "江西",
@@ -93,20 +93,20 @@
     "duration": "3天",
     "accommodation": "无",
     "username": "wangzhuo",
-    "mainImage": "http://localhost:5000/uploads/wangzhuo_1753873881_0911cc60f914baee9134e533ad20465.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873881_0911cc60f914baee9134e533ad20465.jpg",
     "images": [
-      "http://localhost:5000/uploads/wangzhuo_1753873906_85fd7141368a916d6847b4827b22c7e.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_5da6774974b38a6a55cc0304ec4353b.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_93f4f1d76fbb27d48af8c59e33fe857.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_5be92d1bac5cc20bcca1657980da114.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_0420eec8e6a30c328d3a673b5a83cad.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_5eee764e98c315a123523a45936dae7.jpg",
-      "http://localhost:5000/uploads/wangzhuo_1753873907_a1c04444e4b559cdb3bfb7a96772480.jpg"
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873906_85fd7141368a916d6847b4827b22c7e.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_5da6774974b38a6a55cc0304ec4353b.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_93f4f1d76fbb27d48af8c59e33fe857.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_5be92d1bac5cc20bcca1657980da114.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_0420eec8e6a30c328d3a673b5a83cad.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_5eee764e98c315a123523a45936dae7.jpg",
+      "https://tour-app-2.onrender.com/uploads/wangzhuo_1753873907_a1c04444e4b559cdb3bfb7a96772480.jpg"
     ],
     "id": 5,
     "createdAt": "2025-07-30T19:11:48.135883",
     "searchCount": 0,
-    "avatar": "http://localhost:5000/uploads/wangzhuo_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/wangzhuo_avatar.png"
   },
   {
     "name": "漳州",
@@ -115,19 +115,19 @@
     "price": "500",
     "accommodation": "各种吃的",
     "username": "admin",
-    "mainImage": "http://localhost:5000/uploads/admin_1753928650_df9472fd46f1401b67d785bdc852671.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/admin_1753928650_df9472fd46f1401b67d785bdc852671.jpg",
     "images": [
-      "http://localhost:5000/uploads/admin_1753928667_58c9e5d4c8b488afb137840dc4d3dd8.jpg",
-      "http://localhost:5000/uploads/admin_1753928668_d5574187dc44761e6caa9d15e3f70ab.jpg",
-      "http://localhost:5000/uploads/admin_1753928668_665d1240e9757f5add3958ddff87060.jpg",
-      "http://localhost:5000/uploads/admin_1753928668_1b4ebaa7ac147876b6422cdee521f21.jpg",
-      "http://localhost:5000/uploads/admin_1753928668_2ef8db9b5d06d2cc092c4af39f91dad.jpg",
-      "http://localhost:5000/uploads/admin_1753928668_df9472fd46f1401b67d785bdc852671.jpg"
+      "https://tour-app-2.onrender.com/uploads/admin_1753928667_58c9e5d4c8b488afb137840dc4d3dd8.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1753928668_d5574187dc44761e6caa9d15e3f70ab.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1753928668_665d1240e9757f5add3958ddff87060.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1753928668_1b4ebaa7ac147876b6422cdee521f21.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1753928668_2ef8db9b5d06d2cc092c4af39f91dad.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1753928668_df9472fd46f1401b67d785bdc852671.jpg"
     ],
     "id": 6,
     "createdAt": "2025-07-31T10:24:29.051295",
     "searchCount": 0,
-    "avatar": "http://localhost:5000/uploads/admin_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/admin_avatar.png"
   },
   {
     "name": "土耳其",
@@ -136,12 +136,14 @@
     "price": "5000",
     "accommodation": " 额外",
     "username": "admin",
-    "mainImage": "http://localhost:5000/uploads/admin_1754146124_5da6774974b38a6a55cc0304ec4353b.jpg",
+    "mainImage": "https://tour-app-2.onrender.com/uploads/admin_1754146124_5da6774974b38a6a55cc0304ec4353b.jpg",
     "images": [
-      "http://localhost:5000/uploads/admin_1754146131_1b4ebaa7ac147876b6422cdee521f21.jpg",
-      "http://localhost:5000/uploads/admin_1754146131_2ef8db9b5d06d2cc092c4af39f91dad.jpg"
+      "https://tour-app-2.onrender.com/uploads/admin_1754146131_1b4ebaa7ac147876b6422cdee521f21.jpg",
+      "https://tour-app-2.onrender.com/uploads/admin_1754146131_2ef8db9b5d06d2cc092c4af39f91dad.jpg"
     ],
     "id": 7,
-    "createdAt": "2025-08-02T22:48:52.183101"
+    "createdAt": "2025-08-02T22:48:52.183101",
+    "searchCount": 0,
+    "avatar": "https://tour-app-2.onrender.com/uploads/admin_avatar.png"
   }
 ]

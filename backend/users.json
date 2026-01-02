@@ -2,16 +2,16 @@
   {
     "username": "admin",
     "password": "admin123",
-    "avatar": "http://localhost:5000/uploads/admin_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/admin_avatar.png"
   },
   {
     "username": "zhouzhiwei",
     "password": "198565",
-    "avatar": "http://localhost:5000/uploads/zhouzhiwei_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/zhouzhiwei_avatar.png"
   },
   {
     "username": "wangzhuo",
     "password": "123456",
-    "avatar": "http://localhost:5000/uploads/wangzhuo_avatar.png"
+    "avatar": "https://tour-app-2.onrender.com/uploads/wangzhuo_avatar.png"
   }
 ]
