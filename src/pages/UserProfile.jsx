@@ -81,6 +81,7 @@ const UserProfile = () => {
     const [form] = Form.useForm();
 
     const [tours, setTours] = useState([]);
+    const [allTours, setAllTours] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [userProfile, setUserProfile] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
